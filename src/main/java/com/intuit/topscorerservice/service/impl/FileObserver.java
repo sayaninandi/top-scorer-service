@@ -21,18 +21,21 @@ import java.nio.file.Files;
 import java.util.stream.Stream;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class FileObserver {
 
     private static final String COMMA_DELIMITER = ",";
-    @Value("${observe.folder.path:}")
     private String folderPath;
 
-    @Value("${file.poll.interval}")
     private long pollingInterval;
 
     private PlayerScoreService playerScoreService;
+
+    public FileObserver(@Value("${observe.folder.path:}") String folderPath, @Value("${file.poll.interval}") long pollingInterval, PlayerScoreService playerScoreService) {
+        this.folderPath = folderPath;
+        this.pollingInterval = pollingInterval;
+        this.playerScoreService = playerScoreService;
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     @Async

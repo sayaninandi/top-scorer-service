@@ -54,7 +54,7 @@ public class PlayerScoreRepositoryImpl implements PlayerScoreRepository {
 
             Integer count = jdbcTemplate.queryForObject(Queries.PLAYER_SCORE_EXIST, Integer.class, scoreEntity.getPlayerId(), scoreEntity.getGameId());
             if (count < 1) {
-                int rowsAdded = jdbcTemplate.update(Queries.INSERT_SCORE, scoreEntity.getPlayerId(), scoreEntity.getGameId(), scoreEntity.getScore());
+                int rowsAdded = jdbcTemplate.update(Queries.SAVE_SCORE, scoreEntity.getPlayerId(), scoreEntity.getGameId(), scoreEntity.getScore());
                 if (rowsAdded != 1) {
                     log.error("Expected rows added to be 1 when creating score but was {}", rowsAdded);
                     throw new DaoServiceException(DaoExceptionCodes.DAO_UPDATE_ERROR);

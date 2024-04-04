@@ -18,18 +18,22 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Set;
 
-@RequiredArgsConstructor
 @Service
 @Slf4j
 public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     private final PlayerScoreEntityMapper mapper = PlayerScoreEntityMapper.mapper;
 
-    @Value("${topK.count:5}")
     private int topK;
 
     private final PlayerScoreRepository scoreRepository;
     private final CacheHandler cacheHandler;
+
+    public PlayerScoreServiceImpl(@Value("${topK.count:5}") int topK, PlayerScoreRepository scoreRepository, CacheHandler cacheHandler) {
+        this.topK = topK;
+        this.scoreRepository = scoreRepository;
+        this.cacheHandler = cacheHandler;
+    }
 
     @Override
     public List<PlayerScoreResponse> getTopK(String gameId) {
@@ -50,19 +54,18 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     @Override
     @Transactional
+    public void save(PlayerScoreEntity entity) {
+        log.info("Saving score");
+        scoreRepository.saveScore(entity);
+        log.info("Score saved");
+    }
+    @Override
     public PlayerScoreResponse saveScore(PlayerScoreRequest request) {
         PlayerScoreEntity playerScore = scoreRepository.getPlayerScore(request.getPlayerId(), request.getGameId());
 
-        /*
-         * We will insert in DB if playerScore is not already present,
-         * Else if present, will update if current score > stores score
-         */
-
         if(playerScore== null || request.getScore() > playerScore.getScore()) {
             PlayerScoreEntity entity = mapper.toEntity(request);
-            log.info("Saving score");
-            scoreRepository.saveScore(entity);
-            log.info("Score saved");
+            save(entity);
             cacheHandler.add(entity);
             return mapper.toDto(entity);
         }

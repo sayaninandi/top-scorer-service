@@ -16,7 +16,7 @@ public class Queries {
             from player_scores
             where player_id = ? and game_id=?""";
 
-    public static  final String INSERT_SCORE = """
+    public static  final String SAVE_SCORE = """
             insert into player_scores (player_id, game_id, score)
             values (?, ?, ?)""";
 

@@ -1,6 +1,7 @@
 package com.intuit.topscorerservice.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
@@ -12,9 +13,4 @@ import lombok.Value;
 public class PlayerScoreResponse {
     long score;
     String playerId;
-
-    public PlayerScoreResponse( long score,String playerId) {
-        this.score = score;
-        this.playerId = playerId;
-    }
 }

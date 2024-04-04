@@ -16,32 +16,36 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
 @Slf4j
 public class CacheHandler {
 
-    @Value("${topK.count:5}")
     private int topK;
 
     private final RedisTemplate<String, String> redisTemplate;
-    private ZSetOperations<String, String> zSetOperations;
+    //    private ZSetOperations<String, String> zSetOperations;
     public static final String KEY = "playerScore:";
 
-    @PostConstruct
-    private void init() {
-        zSetOperations = redisTemplate.opsForZSet();
+    public CacheHandler(@Value("${topK.count:5}") int topK, RedisTemplate<String, String> redisTemplate) {
+        this.topK = topK;
+        this.redisTemplate = redisTemplate;
+//        this.zSetOperations = zSetOperations;
     }
 
+//    @PostConstruct
+//    private void init() {
+//        zSetOperations = redisTemplate.opsForZSet();
+//    }
+
     public void add(String value, double score) {
-        zSetOperations.add(KEY, value, score);
+        redisTemplate.opsForZSet().add(KEY, value, score);
     }
 
     public void add(PlayerScoreEntity scoreEntity) {
         log.info("cache updated for {} with {} for game {}", scoreEntity.getPlayerId(), scoreEntity.getScore(), scoreEntity.getGameId());
         try {
-            zSetOperations.add(getKey(scoreEntity.getGameId()), scoreEntity.getPlayerId(), scoreEntity.getScore());
-        }catch (Exception e) {
+            redisTemplate.opsForZSet().add(getKey(scoreEntity.getGameId()), scoreEntity.getPlayerId(), scoreEntity.getScore());
+        } catch (Exception e) {
             log.error(STR."Failed to update cache - \{e.getMessage()}");
             throw new CacheUpdateFailureException(CacheExceptionCodes.CACHE_UPDATE_ERROR);
         }
@@ -50,9 +54,9 @@ public class CacheHandler {
     public List<PlayerScoreResponse> getSortedSetRange(String gameId) {
         String cacheKey = getKey(gameId);
         try {
-            long totalElements = zSetOperations.size(cacheKey);
+            long totalElements = redisTemplate.opsForZSet().size(cacheKey);
             log.info("Cache has data size of {} for key {}", totalElements, cacheKey);
-            Set<ZSetOperations.TypedTuple<String>> typedTuples = zSetOperations.reverseRangeWithScores(cacheKey, 0, topK-1);
+            Set<ZSetOperations.TypedTuple<String>> typedTuples = redisTemplate.opsForZSet().reverseRangeWithScores(cacheKey, 0, topK - 1);
 
             if (typedTuples != null && typedTuples.size() > 0) {
                 return typedTuples.stream()

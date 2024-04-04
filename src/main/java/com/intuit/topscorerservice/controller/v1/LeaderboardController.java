@@ -5,8 +5,10 @@ import com.intuit.topscorerservice.dto.PlayerScoreRequest;
 import com.intuit.topscorerservice.dto.PlayerScoreResponse;
 import com.intuit.topscorerservice.service.PlayerScoreService;
 import com.intuit.topscorerservice.service.impl.CacheHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,16 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
-import static com.intuit.topscorerservice.dao.Constants.GAME_ID;
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/scores")
 public class LeaderboardController {
 
-    @Autowired
-    private PlayerScoreService playerScoreService;
+    private final PlayerScoreService playerScoreService;
+    public static final String GAME_ID = "game1";
 
-    @PostMapping("")
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlayerScoreResponse> save(@RequestBody PlayerScoreRequest request) {
         PlayerScoreResponse playerScoreResponse = playerScoreService.saveScore(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(playerScoreResponse);

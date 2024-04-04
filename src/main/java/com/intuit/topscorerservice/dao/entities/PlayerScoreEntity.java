@@ -18,5 +18,4 @@ public class PlayerScoreEntity {
     String gameId;
     OffsetDateTime dateCreated;
     OffsetDateTime dateUpdated;
-
 }
