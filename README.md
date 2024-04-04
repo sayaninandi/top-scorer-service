@@ -9,7 +9,7 @@ Intuit Craft Demo project
 5. Upon application startup, a fixed number N is determined to dictate the size of the leaderboard, which returns the top N scores along with player userIdentifier.
 6. When a player engages in multiple sessions of the same game, only the highest score attained is stored.
 7. A leaderboard is available for each game, with only one game currently available named "game1"
-8. Normal replication lag is expected, ensuring subsequent reads after writes will consistently retrieve updated data.
+8. MySQL and Redis will always be available.
 9. All exposed APIs are exclusively utilized internally by the gaming service. No APIs are publicly accessible. Therefore, we assume these APIs require no data validation checks and are predominantly used in a sequential manner as expected.
 10. Since all APIs are utilized internally, user authentication and authorization are unnecessary. All security measures will be managed by the Game service or gateway prior to API access.
 
@@ -20,3 +20,6 @@ Intuit Craft Demo project
     * Whenever a game is played (First time), a corresponding leaderboard is available.
 2. Upon consumption of scores post-game completion, the leaderboard is dynamically updated.
 3. After a game has been played at least once, the top N player details can be fetched at any given time.
+
+## Future Improvement
+1. 
