@@ -40,7 +40,7 @@ public class PlayerScoreRepositoryImpl implements PlayerScoreRepository {
         try {
             return jdbcTemplate.queryForObject(Queries.GET_PLAYER_SCORE, mapper, playedId, gameId);
         } catch (EmptyResultDataAccessException e) {
-            log.info("No data found", e);
+            log.info("No data found");
             return null;
         } catch (Exception e) {
             log.error("Exception while getting player score", e);
